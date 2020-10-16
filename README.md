@@ -3,7 +3,7 @@
 ## Installation
 
 ```
-composer require salamander/array-mapper
+composer require salamanderbe/array-mapper
 ```
 
 ## Examples
