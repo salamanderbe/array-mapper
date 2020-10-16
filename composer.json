@@ -1,5 +1,5 @@
 {
-    "name": "salamander/array-mapper",
+    "name": "salamanderbe/array-mapper",
     "description": "Simple mapper to map an object to an array based on a configuration",
     "type": "library",
     "authors": [
