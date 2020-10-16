@@ -19,10 +19,40 @@ $mapping = [
     'name' => 'title',
 ];
 ```
+
 the function will map the source oject's *identifier* field to the output's *id* field, the same goes for *title* and *name*. resulting in the following array:
 ```
 [
     'id' => '1',
     'name' => 'my basic object'
+]
+```
+
+### Nesting
+using the same object as above:
+```
+{
+    "identifier": "1",
+    "name": "my basic object"
+}
+```
+
+We can easily create nested mappings using the a config like the following:
+```
+$mapping = [
+    'id' => 'identifier',
+    'nested' => [
+        'name' => 'title',
+    ]
+];
+```
+
+This will result in the following array:
+```
+[
+    'id' => '1',
+    'nested' => [
+        'name' => 'my basic object'
+    ]
 ]
 ```
