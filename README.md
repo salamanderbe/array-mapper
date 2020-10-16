@@ -145,3 +145,52 @@ Now the _child_names_ field on the output array will contain all the child's _ch
     ]
 ]
 ```
+
+### Arrays in the result array
+
+Say you want to map the children into a nested array:
+
+```
+{
+    "identifier": "1",
+    "title": "my basic object",
+    "children": [
+        {
+            "child_title": "my first child"
+        },
+        {
+            "child_title": "my second child"
+        }
+    ]
+}
+```
+
+We can use the `.*` notation on the output field to indicate we want to map multiple children's fields
+
+```
+$mapping = [
+    'id' => 'identifier',
+    'name' => 'title',
+    'children.*' => [
+        'name' => 'children.*.child_title',
+    ],
+];
+```
+
+Now all the source objects' children _child_title_ fields will be mapped to a _children_ array on the output array, each item inside _children_ will be an array with the child's title field mapped to the output's name field:
+
+```
+[
+    'id' => '1',
+    'name' => 'my basic object',
+    'children' => [
+        [
+            'name' => 'my first child'
+        ],
+        [
+            'name' => 'my second child'
+        ],
+
+    ]
+]
+```
