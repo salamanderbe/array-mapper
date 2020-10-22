@@ -194,3 +194,66 @@ Now all the source objects' children _child_title_ fields will be mapped to a _c
     ]
 ]
 ```
+
+### Merging arrays in the result array
+
+Let's assume we have a source object with 2 array which we want to be combined in a single result:
+
+```
+{
+    "identifier": "1",
+    "title": "my basic object",
+    "children": [
+        {
+            "child_title": "my first child"
+        },
+        {
+            "child_title": "my second child"
+        }
+    ],
+    "grandchildren": [
+        {
+            "grandchild_title": "my first grandchild"
+        },
+        {
+            "grandchild_title": "my second grandchild"
+        }
+    ]
+}
+```
+
+We can combine these using the same syntax as with the arrays but instead nesting multiple sources:
+
+```
+$mapping = [
+    'id' => 'identifier',
+    'name' => 'title',
+    'descendants.*' => [
+        ['name' => 'children.*.child_title'],
+        ['name' => 'grandchildren.*.grandchild_title'],
+    ],
+];
+```
+
+this will result in a result array with a _descendants_ field containing both the source's _children_ and _grandchildren_:
+
+```
+[
+    'id' => '1',
+    'name' => 'my basic object',
+    'descendants' => [
+        [
+            'name' => 'my first child'
+        ],
+        [
+            'name' => 'my second child'
+        ],
+        [
+            'name' => 'my first grandchild'
+        ],
+        [
+            'name' => 'my second grandchild'
+        ],
+    ]
+]
+```

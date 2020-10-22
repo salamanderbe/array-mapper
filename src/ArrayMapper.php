@@ -15,17 +15,25 @@ class ArrayMapper
         $value = [];
         foreach ($mapping as $mapKey => $mapValue) {
             if (substr($mapKey, -2) === '.*') {
-                $childResponses = $this->map($object, $mapValue, false);
-
-                $children = [];
-                foreach ($childResponses as $field => $responseValues) {
-                    foreach ($responseValues as $index => $responseValue) {
-                        $child = $children[$index] ?? [];
-                        $child[$field] = $responseValue;
-                        $children[$index] = $child;
-                    }
+                if (array_keys($mapValue) !== range(0, count($mapValue) - 1)) {
+                    $mapValue = [$mapValue];
                 }
-                $value[substr($mapKey, 0, -2)] = $children;
+
+                $allNested = [];
+                foreach ($mapValue as $nestedValue) {
+                    $nested = [];
+                    $childResponses = $this->map($object, $nestedValue, false);
+                    foreach ($childResponses as $field => $responseValues) {
+                        foreach ($responseValues as $index => $responseValue) {
+                            $child = $nested[$index] ?? [];
+                            $child[$field] = $responseValue;
+                            $nested[$index] = $child;
+                        }
+                    }
+                    $allNested = array_merge($allNested, $nested);
+                }
+
+                $value[substr($mapKey, 0, -2)] = $allNested;
                 continue;
             }
 

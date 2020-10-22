@@ -347,6 +347,36 @@ class ArrayMapperTest extends TestCase
         );
     }
 
+    public function testMapArrayMerged()
+    {
+        $mapping = [
+            'merged.*' => [
+                [
+                    'id' => 'documents.*.id',
+                    'description' => 'documents.*.description',
+                ],
+                [
+                    'id' => 'images.*.id',
+                    'description' => 'images.*.description',
+                ],
+            ],
+        ];
+
+        $expectedArray = [
+            'merged' => [],
+        ];
+        foreach ($this->sampleResponse->documents as $document) {
+            $expectedArray['merged'][] = ['id' => $document->id, 'description' => $document->description];
+        }
+        foreach ($this->sampleResponse->images as $image) {
+            $expectedArray['merged'][] = ['id' => $image->id, 'description' => $image->description];
+        }
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
     protected function setUp(): void
     {
         $this->mapper = new ArrayMapper();
@@ -528,6 +558,14 @@ class ArrayMapperTest extends TestCase
                   "id": "1234-5678-9012",
                   "filename": "my-plan.pdf",
                   "description": "My plan",
+                  "content_type": "application/pdf",
+                  "url": "http://absolute-url-to-download-plan-from/plan.pdf",
+                  "url_expires_on": "2017-01-01T12:12:12+00:00"
+                },
+                {
+                  "id": "1234-5678-90122",
+                  "filename": "my-plan.pdf",
+                  "description": "My plan2",
                   "content_type": "application/pdf",
                   "url": "http://absolute-url-to-download-plan-from/plan.pdf",
                   "url_expires_on": "2017-01-01T12:12:12+00:00"
