@@ -61,7 +61,9 @@ class ArrayMapper
         foreach ($mapping as $nestedValue) {
             $nested = [];
             $childResponses = $this->handleMap($object, $nestedValue, false);
-            $length = count(array_values($childResponses)[0] ?? []);
+
+            $firstValues = array_values($childResponses)[0] ?? [];
+            $length = is_array($firstValues) ? count($firstValues) : 1;
 
             foreach ($childResponses as $field => $responseValues) {
                 if (!is_array($responseValues)) {

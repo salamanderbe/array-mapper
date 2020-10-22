@@ -458,6 +458,55 @@ class ArrayMapperTest extends TestCase
         $this->assertEquals($expected, $mappedData);
     }
 
+    public function testMapArraySingleValue()
+    {
+        $mapping = [
+            'test_array.*' => [
+                'id' => 'documents.*.id',
+                'description' => 'documents.*.description',
+                'gas' => 'features.energy.gas',
+            ],
+        ];
+
+        $expectedArray = [
+            'test_array' => [],
+        ];
+        foreach ($this->sampleResponse->documents as $document) {
+            $expectedArray['test_array'][] = ['id' => $document->id, 'description' => $document->description, 'gas' => $this->sampleResponse->features->energy->gas];
+        }
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
+    public function testMapArrayMergedSingleValue()
+    {
+        $mapping = [
+            'merged.*' => [
+                [
+                    'id' => 'documents.*.id',
+                    'description' => 'documents.*.description',
+                ],
+                ['gas' => 'features.energy.gas'],
+                ['fireplace' => 'features.comfort.fireplace'],
+            ],
+        ];
+
+        $expectedArray = [
+            'merged' => [],
+        ];
+        foreach ($this->sampleResponse->documents as $document) {
+            $expectedArray['merged'][] = ['id' => $document->id, 'description' => $document->description];
+        }
+        $expectedArray['merged'][] = ['gas' => $this->sampleResponse->features->energy->gas];
+        $expectedArray['merged'][] = ['fireplace' => $this->sampleResponse->features->comfort->fireplace];
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
     protected function setUp(): void
     {
         $this->mapper = new ArrayMapper();
