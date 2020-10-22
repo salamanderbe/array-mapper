@@ -37,7 +37,7 @@ The function will map the source oject's _identifier_ field to the output's _id_
 ]
 ```
 
-### Fixed value's
+### Fixed values
 
 Starting with the following source object:
 
