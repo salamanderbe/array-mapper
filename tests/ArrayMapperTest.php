@@ -377,6 +377,87 @@ class ArrayMapperTest extends TestCase
         $this->assertEquals($expectedArray, $mappedData);
     }
 
+    public function testMapFixedValue()
+    {
+        $mapping = [
+            'my_id' => 'id',
+            'fixed_value' => '#fixed value',
+        ];
+
+        $expectedArray = [
+            'my_id' => $this->sampleResponse->id,
+            'fixed_value' => 'fixed value',
+        ];
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
+    public function testMapFixedValueEscape()
+    {
+        $mapping = [
+            'my_id' => 'id',
+            'escaped' => '##prefixed',
+        ];
+
+        $expectedArray = [
+            'my_id' => $this->sampleResponse->id,
+            'escaped' => $this->sampleResponse->{'#prefixed'},
+        ];
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
+    public function testMapFixedValueNested()
+    {
+        $mapping = [
+            'my_id' => 'id',
+            'nested' => [
+                'fixed_value' => '#fixed value',
+            ],
+        ];
+
+        $expectedArray = [
+            'my_id' => $this->sampleResponse->id,
+            'nested' => [
+                'fixed_value' => 'fixed value',
+            ],
+        ];
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expectedArray, $mappedData);
+    }
+
+    public function testMapFixedValueArray()
+    {
+        $mapping = [
+            'my_id' => 'id',
+            'test_array.*' => [
+                'id' => 'nested.*.id',
+                'name' => 'nested.*.title',
+                'fixed_value' => '#fixed value',
+            ],
+        ];
+
+        $expectedArray = [];
+        foreach ($this->sampleResponse->nested as $nest) {
+            $expectedArray[] = ['id' => $nest->id, 'name' => $nest->title, 'fixed_value' => 'fixed value'];
+        }
+
+        $expected = [
+            'my_id' => $this->sampleResponse->id,
+            'test_array' => $expectedArray,
+        ];
+
+        $mappedData = $this->mapper->map($this->sampleResponse, $mapping);
+
+        $this->assertEquals($expected, $mappedData);
+    }
+
     protected function setUp(): void
     {
         $this->mapper = new ArrayMapper();
@@ -696,7 +777,8 @@ class ArrayMapperTest extends TestCase
                         }
                     ]
                 }
-              ]
+            ],
+            "#prefixed": "prefixed value"
             }');
     }
 }

@@ -28,7 +28,7 @@ $mapping = [
 ];
 ```
 
-the function will map the source oject's _identifier_ field to the output's _id_ field, the same goes for _title_ and _name_. resulting in the following array:
+The function will map the source oject's _identifier_ field to the output's _id_ field, the same goes for _title_ and _name_. resulting in the following array:
 
 ```
 [
@@ -37,9 +37,42 @@ the function will map the source oject's _identifier_ field to the output's _id_
 ]
 ```
 
+### Fixed value's
+
+Starting with the following source object:
+
+```
+{
+    "identifier": "1",
+    "title": "my basic object"
+}
+```
+
+With the `#` notation we can easily add a fixed value not present on the source object:
+
+```
+$mapping = [
+    'id' => 'identifier',
+    'name' => 'title',
+    'type' => '#my type',
+];
+```
+
+Now we have an array containing our fixed value:
+
+```
+[
+    'id' => '1',
+    'name' => 'my basic object',
+    'type' => 'my type',
+]
+```
+
+_note: if your source field contains a `#` character you can escape it by adding another `#` character e.g. `##type`_
+
 ### Nesting
 
-using the same object as above:
+Using the same object as above:
 
 ```
 {
@@ -235,7 +268,7 @@ $mapping = [
 ];
 ```
 
-this will result in a result array with a _descendants_ field containing both the source's _children_ and _grandchildren_:
+This will result in a result array with a _descendants_ field containing both the source's _children_ and _grandchildren_:
 
 ```
 [
